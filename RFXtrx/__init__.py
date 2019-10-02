@@ -79,7 +79,7 @@ class RollerTrolDevice(RFXtrxDevice):
             self.cmndseqnbr,
             self.id_combined,
             self.unitcode,
-            0x00
+            0x01
         )
         self.cmndseqnbr = (self.cmndseqnbr + 1) % 5
         transport.send(pkt.data)
@@ -92,7 +92,7 @@ class RollerTrolDevice(RFXtrxDevice):
             self.cmndseqnbr,
             self.id_combined,
             self.unitcode,
-            0x01
+            0x00
         )
         self.cmndseqnbr = (self.cmndseqnbr + 1) % 5
         transport.send(pkt.data)
