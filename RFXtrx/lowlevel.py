@@ -1229,8 +1229,8 @@ class OregonTemp(SensorPacket):
         id1, id2 = msg.values["source"].split(".")
         self.data = data
         self.packetlength = data[0]
-        self.packettype = 0
-        self.subtype = id1
+        self.packettype = data[1]
+        self.subtype = data[2]
         self.seqnbr = 0
         self.id1 = id1
         self.id2 = id2
@@ -1403,7 +1403,7 @@ class OregonTempHumid(SensorPacket):
         self.data = data
         self.packetlength = data[0]
         self.packettype = data[1]
-        self.subtype = id1
+        self.subtype = data[2]
         self.seqnbr = 0
         self.id1 = id1
         self.id2 = id2
