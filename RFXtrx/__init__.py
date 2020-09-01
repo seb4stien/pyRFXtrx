@@ -843,7 +843,7 @@ class Connect:
     #  pylint: disable=too-many-instance-attributes, too-many-arguments
     def __init__(self, device, event_callback=None,
                  transport_protocol=PySerialTransport,
-                 modes=None):
+                 modes=None, debug=False):
         self._run_event = threading.Event()
         self._sensors = {}
         self._status = None
