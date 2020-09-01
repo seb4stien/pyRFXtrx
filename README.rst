@@ -1,21 +1,8 @@
-==========
- pyRFXtrx  |Build Status| |Coverage Status|
-==========
+Official pyRFXtrx is here https://github.com/Danielhiversen/pyRFXtrx/
 
-A Python library to communicate with the RFXtrx family of devices
-from http://www.rfxcom.com/. Works with http://www.home-assistant.io
+This is a dirty hack to support legacy RFXRec.
 
-
-Using
-=====
-
-Instally via pip
-
-::
-   $ pip install -U pyRFXtrx
-
-After that, see the examples in the examples directory
-
+Note: it does not offer exhaustive support at all, just some Oregon probes.
 
 Licensing
 =========
