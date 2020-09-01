@@ -39,6 +39,7 @@ def parse(data):
             msg = OregonParser.parse(data[0], data[1:])
             if not msg:
                 return None
+
             print(f"RFXrec: {msg}")
             if "humidity" in msg.values:
                 pkt = OregonTempHumid()
@@ -1244,7 +1245,7 @@ class OregonTemp(SensorPacket):
     def _set_strings(self):
         """Translate loaded numeric values into convenience strings"""
         self.id_string = "{}:{}".format(self.id1, self.id2)
-        self.type_string = self.subtype
+        self.type_string = "Oregon"
 
 ###############################################################################
 # Bbq class
@@ -1420,7 +1421,7 @@ class OregonTempHumid(SensorPacket):
     def _set_strings(self):
         """Translate loaded numeric values into convenience strings"""
         self.id_string = "{}:{}".format(self.id1, self.id2)
-        self.type_string = self.id1
+        self.type_string = "Oregon"
         self.humidity_status_string = self.humidity
 
 class TempHumid(SensorPacket):
