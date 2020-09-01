@@ -24,6 +24,7 @@ RFXtrx.
 # pylint: disable=C0302,R0902,R0903,R0911,R0913
 # pylint: disable= too-many-lines, too-many-statements
 
+from rfxcom.parsers.oregon import OregonParser
 
 def parse(data):
     # pylint: disable=too-many-branches
@@ -34,6 +35,15 @@ def parse(data):
 
     expected_length = data[0] + 1
     if len(data) != expected_length:
+        if data[0] // 8 == len(data) - 1:
+            msg = OregonParser.parse(data[0], data[1:])
+            print(f"RFXrec: {msg}")
+            if "humidity" in msg.values:
+                pkt = OregonTempHumid()
+            else:
+                pkt = OregonTemp()
+            pkt.load_receive(data, msg)
+            return pkt
         return None
 
     if data[1] == 0x01:
@@ -1193,6 +1203,46 @@ class Temp(SensorPacket):
             self.type_string = self._UNKNOWN_TYPE.format(self.packettype,
                                                          self.subtype)
 
+class OregonTemp(SensorPacket):
+    """
+    Data class for the Oregon probes from RFXrec
+    """
+
+    def __str__(self):
+        return ("Temp [subtype={0}, seqnbr={1}, id={2}, temp={3}, " +
+                "battery={4}, rssi={5}]") \
+            .format(self.type_string, self.seqnbr, self.id_string,
+                    self.temp, self.battery, self.rssi)
+
+    def __init__(self):
+        """Constructor"""
+        super(OregonTemp, self).__init__()
+        self.id1 = None
+        self.id2 = None
+        self.temphigh = None
+        self.templow = None
+        self.temp = None
+        self.battery = None
+
+    def load_receive(self, data, msg):
+        """Load data from a bytearray"""
+        id1, id2 = msg.values["source"].split(".")
+        self.data = data
+        self.packetlength = data[0]
+        self.packettype = 0
+        self.subtype = id1
+        self.seqnbr = 0
+        self.id1 = id1
+        self.id2 = id2
+        self.temp = msg.values["temp"]
+        self.battery = msg.values["battery"]
+        self.rssi = 0
+        self._set_strings()
+
+    def _set_strings(self):
+        """Translate loaded numeric values into convenience strings"""
+        self.id_string = "{}:{}".format(self.id1, self.id2)
+        self.type_string = self.subtype
 
 ###############################################################################
 # Bbq class
@@ -1323,6 +1373,53 @@ class Humid(SensorPacket):
 ###############################################################################
 # TempHumid class
 ###############################################################################
+
+class OregonTempHumid(SensorPacket):
+    """
+    Data class for the Oregon TempHumid packet type
+    """
+
+    def __str__(self):
+        return ("TempHumid [subtype={0}, seqnbr={1}, id={2}, temp={3}, " +
+                "humidity={4}, humidity_status={5}, battery={6}, rssi={7}]") \
+            .format(self.type_string, self.seqnbr, self.id_string,
+                    self.temp, self.humidity, self.humidity_status,
+                    self.battery, self.rssi)
+
+    def __init__(self):
+        """Constructor"""
+        super(OregonTempHumid, self).__init__()
+        self.id1 = None
+        self.id2 = None
+        self.temp = None
+        self.humidity = None
+        self.humidity_status = None
+        self.humidity_status_string = None
+        self.battery = None
+
+    def load_receive(self, data, msg):
+        """Load data from a bytearray"""
+        id1, id2 = msg.values["source"].split(".")
+        self.data = data
+        self.packetlength = data[0]
+        self.packettype = data[1]
+        self.subtype = id1
+        self.seqnbr = 0
+        self.id1 = id1
+        self.id2 = id2
+        self.temp = msg.values["temp"]
+        self.humidity = msg.values["humidity"]
+        self.humidity_status = self.humidity
+        self.rssi_byte = 0
+        self.battery = msg.values["battery"]
+        self.rssi = 0
+        self._set_strings()
+
+    def _set_strings(self):
+        """Translate loaded numeric values into convenience strings"""
+        self.id_string = "{}:{}".format(self.id1, self.id2)
+        self.type_string = self.id1
+        self.humidity_status_string = self.humidity
 
 class TempHumid(SensorPacket):
     """
