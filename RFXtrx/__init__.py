@@ -427,13 +427,13 @@ class SensorEvent(RFXtrxEvent):
         self.pkt = pkt
         if isinstance(pkt, lowlevel.RfxMeter):
             self.values['Counter value'] = pkt.value
-        if isinstance(pkt, (lowlevel.Temp, lowlevel.TempHumid,
+        if isinstance(pkt, (lowlevel.Temp, lowlevel.TempHumid, lowlevel.OregonTempHumid, lowlevel.OregonTemp,
                             lowlevel.TempHumidBaro, lowlevel.TempRain)):
             self.values['Temperature'] = pkt.temp
         if isinstance(pkt, lowlevel.Bbq):
             self.values['Temperature'] = pkt.temp1
             self.values['Temperature2'] = pkt.temp2
-        if isinstance(pkt, (lowlevel.Humid, lowlevel.TempHumid,
+        if isinstance(pkt, (lowlevel.Humid, lowlevel.TempHumid, lowlevel.OregonTempHumid,
                             lowlevel.TempHumidBaro)):
             self.values['Humidity'] = pkt.humidity
             self.values['Humidity status'] = pkt.humidity_status_string
@@ -657,12 +657,12 @@ class PySerialTransport(RFXtrxTransport):
     def connect(self):
         """ Open a serial connexion """
         try:
-            self.serial = serial.Serial(self.port, 38400, timeout=0.1)
+            self.serial = serial.Serial(self.port, 4800, timeout=0.1)
         except serial.serialutil.SerialException:
             port = glob.glob('/dev/serial/by-id/usb-RFXCOM_*-port0')
             if len(port) < 1:
                 return
-            self.serial = serial.Serial(port[0], 38400, timeout=0.1)
+            self.serial = serial.Serial(port[0], 4800, timeout=0.1)
 
     def receive_blocking(self):
         """ Wait until a packet is received and return with an RFXtrxEvent """
