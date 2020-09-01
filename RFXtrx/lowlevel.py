@@ -37,6 +37,8 @@ def parse(data):
     if len(data) != expected_length:
         if data[0] // 8 == len(data) - 1:
             msg = OregonParser.parse(data[0], data[1:])
+            if not msg:
+                return None
             print(f"RFXrec: {msg}")
             if "humidity" in msg.values:
                 pkt = OregonTempHumid()
