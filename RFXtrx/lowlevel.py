@@ -35,7 +35,7 @@ def parse(data):
 
     expected_length = data[0] + 1
     if len(data) != expected_length:
-        if data[0] // 8 == len(data) - 1:
+        if data[0] // 8 in [8, 10]:
             msg = OregonParser.parse(data[0], data[1:])
             if not msg:
                 return None
